@@ -4,15 +4,20 @@ skip_tags: true
 
 environment:
     matrix:
-        - PYTHON: "C:\Python27-x64"
-        - PYTHON: "C:\Python35-x64"
+        - PYTHON: "C:\\Python27-x64"
+        - PYTHON: "C:\\Python35-x64"
+
+init:
+    - echo %PYTHON%
+    - set PATH=%PYTHON%\;%PYTHON%\Scripts\;%PATH%
 
 install:
-    - ps: pip install -r .\requirements.txt
+    # - pip install -r .\requirements.txt
+    - pip install coverage
 
 test_script:
-    - ps: python --version
-    - ps: coverage run .\test1.py -v
-    - ps: coverage report
+    - python --version
+    - coverage run .\test.py -v
+    - coverage report
 
 build: off
