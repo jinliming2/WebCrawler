@@ -1,0 +1,18 @@
+version: 0.1.{build}
+
+skip_tags: true
+
+environment:
+    matrix:
+        - PYTHON: "C:\Python27-x64"
+        - PYTHON: "C:\Python35-x64"
+
+install:
+    - ps: pip install -r .\requirements.txt
+
+test_script:
+    - ps: python --version
+    - ps: coverage run .\test1.py -v
+    - ps: coverage report
+
+build: off
