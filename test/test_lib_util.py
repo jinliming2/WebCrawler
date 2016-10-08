@@ -13,8 +13,14 @@ class TestLibUtil(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @staticmethod
+    def dictCompare(question, answer=None):
+        if answer is None:
+            return question is None
+        return [k for k in set(answer) if k not in question or question[k] != answer[k]] == []
+
     def test_parse_args(self):
-        result = util.parse_args(
+        assert self.dictCompare(util.parse_args(
             [
                 'F:/Git/WebCrawler/main.py',
                 '1',
@@ -32,8 +38,7 @@ class TestLibUtil(unittest.TestCase):
                 'm': 49,
                 's': '00'
             }, 'url'
-        )
-        answer = {
+        ), {
             'url': '1',
             'a': '2',
             'b': '3',
@@ -41,8 +46,7 @@ class TestLibUtil(unittest.TestCase):
             'download': True,
             'e': True,
             'database': './crawler_20161007144900.db'
-        }
-        assert [k for k in set(answer) if k not in result or result[k] != answer[k]] == []
+        })
 
     def test_format_width(self):
         assert util.format_width(1, 2) == "01"
@@ -52,6 +56,26 @@ class TestLibUtil(unittest.TestCase):
         assert util.format_width(66, 3) == "066"
         assert util.format_width(789, 3) == "789"
         assert util.format_width('', 3) == "000"
+
+    def test_url_filename(self):
+        assert self.dictCompare(util.url_filename('http://www.example.com/file/path/test.php'), {
+            'filename': 'test.php',
+            'path': 'file/path/'
+        })
+        assert self.dictCompare(util.url_filename('http://www.example.com/file/path/test'), {
+            'filename': 'test',
+            'path': 'file/path/'
+        })
+        assert self.dictCompare(util.url_filename('http://www.example.com/file'), {
+            'filename': 'file',
+            'path': '/'
+        })
+        assert self.dictCompare(util.url_filename('http://www.example.com/'))
+        assert self.dictCompare(util.url_filename('http://www.example.com'))
+        assert self.dictCompare(util.url_filename('http://www.example.com/download.php?filename=a.jpg'), {
+            'filename': 'a.jpg',
+            'path': 'download.php/'
+        })
 
 
 if __name__ == '__main__':

@@ -40,3 +40,4 @@ if __name__ == '__main__':
         exit(-1)
     print(arg)
     print(constant)
+    print(util.url_filename('http://www.baidu.com/file/456.qwe'))

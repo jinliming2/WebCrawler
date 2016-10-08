@@ -12,7 +12,7 @@ init:
     - set PATH=%PYTHON%\;%PYTHON%\Scripts\;%PATH%
 
 install:
-    # - pip install -r .\requirements.txt
+    - pip install -r .\requirements.txt
     - pip install coverage
 
 test_script:

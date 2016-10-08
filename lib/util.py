@@ -1,6 +1,7 @@
 #! python3
 import re
 str_constant = re.compile(r'\{\$(\w+)\}')
+filename = re.compile(r'(?<!/)((/(\w+(\.[a-zA-Z0-9]+)?))|(=(\w+\.[a-zA-Z0-9]+)))')
 
 
 def parse_args(args, constant, default_key=''):
@@ -45,3 +46,18 @@ def format_width(string, width, character='0'):
         l.append(character)
     l.append(string)
     return ''.join(l)[-width:]
+
+
+def url_filename(url):
+    """
+    :param url: {String}
+    :return: {String}
+    """
+    rep = filename.findall(url)
+    if len(rep) > 0:
+        return {
+            'filename': rep[-1][2] if rep[-1][2] != '' else rep[-1][5],
+            'path': '/'.join([path[2] if path[2] != '' else path[5] for path in rep[:-1]]) + '/'
+        }
+    else:
+        return None
