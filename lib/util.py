@@ -89,6 +89,8 @@ def url_get_deep(url, current='/'):
     elif url[:7].lower() == 'http://' or url[:8].lower() == 'https://':
         s = url.find('/', 9)
         if s == -1:
+            if url == current:
+                same_origin = True
             return {
                 'origin': same_origin,
                 'deep': 1
@@ -116,3 +118,15 @@ def url_get_deep(url, current='/'):
         'origin': same_origin,
         'deep': deep
     }
+
+
+def make_url(url, current):
+    if url[:7].lower() == 'http://' or url[:8].lower() == 'https://':
+        return url
+    if url[0] != '/':
+        s = current.rfind('/') + 1
+        current = current[:s]
+        return current + url
+    current += '/'
+    s = current.find('/', 9)
+    return current[:s] + url

@@ -1,7 +1,9 @@
 #! python3
 import unittest
+
 if __name__ == '__main__':
     import sys
+
     sys.path.append("..")
 import lib.util as util
 
@@ -98,6 +100,18 @@ class TestLibUtil(unittest.TestCase):
             'deep': 1,
             'origin': True
         })
+        assert self.dictCompare(util.url_get_deep('https://www.example.com/test/test2', 'https://www.example.com'), {
+            'deep': 2,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('https://www.example.com/', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('https://www.example.com', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': True
+        })
         assert self.dictCompare(util.url_get_deep('https://www.example2.com/test/test2', 'https://www.example.com'), {
             'deep': 2,
             'origin': False
@@ -110,6 +124,22 @@ class TestLibUtil(unittest.TestCase):
             'deep': 1,
             'origin': False
         })
+
+    def test_make_url(self):
+        assert util.make_url('/test', 'https://www.example.com') == 'https://www.example.com/test'
+        assert util.make_url('/test/456', 'https://www.example.com/') == 'https://www.example.com/test/456'
+        assert util.make_url('/test?test/test#test',
+                             'https://www.example.com') == 'https://www.example.com/test?test/test#test'
+        assert util.make_url('test2/test3', 'https://www.example.com/test1') == 'https://www.example.com/test2/test3'
+        assert util.make_url('/', 'https://www.example.com/test/test') == 'https://www.example.com/'
+        assert util.make_url('https://www.example.com/test/test2',
+                             'https://www.example.com') == 'https://www.example.com/test/test2'
+        assert util.make_url('https://www.example.com/', 'https://www.example.com') == 'https://www.example.com/'
+        assert util.make_url('https://www.example.com', 'https://www.example.com') == 'https://www.example.com'
+        assert util.make_url('https://www.example2.com/test/test2',
+                             'https://www.example.com') == 'https://www.example2.com/test/test2'
+        assert util.make_url('https://www.example2.com/', 'https://www.example.com') == 'https://www.example2.com/'
+        assert util.make_url('https://www.example2.com', 'https://www.example.com') == 'https://www.example2.com'
 
 
 if __name__ == '__main__':
