@@ -3,18 +3,16 @@ import re
 import requests
 
 a_link = re.compile(
-    r'<(a|link) (([^\'"]+?=[^\'"]+?|[^\'"]+?=\'[^\'"]+?\'|[^\'"]+?="[^\'"]+?") *)*'
+    r'<(a|link) [^/>]*'
     r'href=([-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?|'
     r'\'[-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?\'|'
-    r'"[-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?") *'
-    r'(([^\'"]+?=[^\'"]+?|[^\'"]+?=\'[^\'"]+?\'|[^\'"]+?="[^\'"]+?") *)*/?>'
+    r'"[-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?")[^/>]*/?>'
 )
 img_link = re.compile(
-    r'<img (([^\'"]+?=[^\'"]+?|[^\'"]+?=\'[^\'"]+?\'|[^\'"]+?="[^\'"]+?") *)*'
+    r'<img [^/>]*'
     r'src=([-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?|'
     r'\'[-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?\'|'
-    r'"[-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?") *'
-    r'(([^\'"]+?=[^\'"]+?|[^\'"]+?=\'[^\'"]+?\'|[^\'"]+?="[^\'"]+?") *)*/?>'
+    r'"[-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?")[^/>]*/?>'
 )
 css_link = re.compile(
     r'url\(([-_.~!*\'();:@&=+$,/?#%\[\]A-Za-z0-9]+?|'
@@ -51,13 +49,16 @@ class GetHTML:
 
     @staticmethod
     def get_links(html):
+        a = a_link.findall(html)
+        a = img_link.findall(html)
+        a = css_link.findall(html)
         return {
             'link': [
-                link[3][1:-1] if link[3][0] == '\'' or link[3][0] == '"' else link[3]
+                link[1][1:-1] if link[1][0] == '\'' or link[1][0] == '"' else link[1]
                 for link in a_link.findall(html)
             ],
             'image': [
-                link[2][1:-1] if link[2][0] == '\'' or link[2][0] == '"' else link[2]
+                link[1:-1] if link[0] == '\'' or link[0] == '"' else link
                 for link in img_link.findall(html)
             ],
             'css_image': [

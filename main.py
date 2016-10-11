@@ -39,6 +39,13 @@ def check_args():
 
 
 def url_check(url, current):
+    if url == '':
+        return False
+    a = url.find(':')
+    if a >= 0:
+        a = url[:a]
+        if a != 'http' and a != 'https':
+            return False
     deep = util.url_get_deep(url, current)
     if not deep['origin']:
         return False
@@ -73,6 +80,7 @@ if __name__ == '__main__':
         arg.update(util.parse_args(sys.argv, constant, 'url'))
         check_args()
         arg['deep'] = int(arg['deep'])
+        arg['thread'] = int(arg['thread'])
         arg['timeout'] = int(arg['timeout'])
     except Exception as e:
         print(e)
