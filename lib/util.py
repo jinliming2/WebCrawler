@@ -84,9 +84,9 @@ def url_get_deep(url, current='/'):
         url = current + url
         same_origin = True
 
-    if url[0] == '/':
+    if url[0] == '/' or current[0] == '/':
         same_origin = True
-    elif url[:7].lower() == 'http://' or url[:8].lower() == 'https://':
+    if url[:7].lower() == 'http://' or url[:8].lower() == 'https://':
         s = url.find('/', 9)
         if s == -1:
             if url == current:

@@ -1,5 +1,6 @@
 #! python3
 from queue import Queue
+from queue import Empty as QueueEmpty
 from threading import Thread
 
 
@@ -15,9 +16,9 @@ class ThreadRunner(Thread):
         while True:
             try:
                 callback, args, kwargs = self.queue.get(timeout=self.timeout)
-                callback(args, kwargs)
+                callback(*args, **kwargs)
                 self.queue.task_done()
-            except self.queue.QueueEmpty:
+            except QueueEmpty:
                 break
             except Exception as e:
                 print(e)
@@ -32,7 +33,7 @@ class ThreadPool:
 
     def __create_threads(self, count, timeout=30, daemon=False):
         for i in range(count):
-            thread = ThreadRunner(count, timeout=timeout, daemon=daemon)
+            thread = ThreadRunner(self.queue, timeout=timeout, daemon=daemon)
             self.threads.append(thread)
 
     def add(self, callback, *args, **kwargs):

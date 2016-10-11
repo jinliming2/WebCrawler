@@ -29,14 +29,14 @@ class GetHTML:
     __req = requests.session()
 
     @staticmethod
-    def get(url, header=None, cookie=None, timeout=10, session=True, reset_session=False):
+    def get(url, header=None, cookie=None, timeout=10, session=True, reset_session=False, ssl=True):
         header = header if header is not None else {}
         cookie = cookie if cookie is not None else {}
         if reset_session:
             GetHTML.reset_session()
         req = GetHTML.__req if session else requests
         try:
-            r = req.get(url, headers=header, cookies=cookie, timeout=timeout)
+            r = req.get(url, headers=header, cookies=cookie, timeout=timeout, verify=ssl)
         except requests.Timeout as e:
             print(e)
             raise
