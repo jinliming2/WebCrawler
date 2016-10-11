@@ -61,3 +61,58 @@ def url_filename(url):
         }
     else:
         return None
+
+
+def url_get_deep(url, current='/'):
+    """
+    :param url: {String}
+    :param current: {String}
+    :return: {Dictionary}
+    """
+    s = url.find('?')
+    if s >= 0:
+        url = url[:s]
+    s = url.find('#')
+    if s >= 0:
+        url = url[:s]
+
+    same_origin = False
+
+    if url[0] != '/' and url[:7].lower() != 'http://' and url[:8].lower() != 'https://':
+        s = current.rfind('/') + 1
+        current = current[:s]
+        url = current + url
+        same_origin = True
+
+    if url[0] == '/':
+        same_origin = True
+    elif url[:7].lower() == 'http://' or url[:8].lower() == 'https://':
+        s = url.find('/', 9)
+        if s == -1:
+            return {
+                'origin': same_origin,
+                'deep': 1
+            }
+        if url[:s] == current[:s]:
+            same_origin = True
+        url = url[s:]
+
+    if url == '/':
+        return {
+            'origin': same_origin,
+            'deep': 1
+        }
+
+    if url[-1] == '/':
+        url = url[:-1]
+
+    deep = 0
+    s = url.find('/')
+    while s >= 0:
+        deep += 1
+        s = url.find('/', s + 1)
+
+    return {
+        'origin': same_origin,
+        'deep': deep
+    }

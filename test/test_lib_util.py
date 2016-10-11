@@ -77,6 +77,40 @@ class TestLibUtil(unittest.TestCase):
             'path': 'download.php/'
         })
 
+    def test_url_get_deep(self):
+        assert self.dictCompare(util.url_get_deep('/test', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('/test/456', 'https://www.example.com/'), {
+            'deep': 2,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('/test?test/test#test', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('test2/test3', 'https://www.example.com/test1'), {
+            'deep': 2,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('/', 'https://www.example.com/test/test'), {
+            'deep': 1,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('https://www.example2.com/test/test2', 'https://www.example.com'), {
+            'deep': 2,
+            'origin': False
+        })
+        assert self.dictCompare(util.url_get_deep('https://www.example2.com/', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': False
+        })
+        assert self.dictCompare(util.url_get_deep('https://www.example2.com', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': False
+        })
+
 
 if __name__ == '__main__':
     unittest.main()
