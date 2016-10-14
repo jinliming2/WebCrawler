@@ -47,6 +47,8 @@ def url_check(url, current):
         if a != 'http' and a != 'https':
             return False
     deep = util.url_get_deep(url, current)
+    if deep is None:
+        return False
     if not deep['origin']:
         return False
     if deep['deep'] > max_deep:
