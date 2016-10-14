@@ -6,6 +6,7 @@ import lib.util as util
 import lib.db_helper as db
 from lib.ThreadPool import ThreadPool
 from lib.net.GetHTML import GetHTML
+from lib.net.FileDownloader import download
 arg = {
     'url': None,
     'unsafe': False,
@@ -68,6 +69,8 @@ def process_image(url, current):
     print("Processing Image: " + url)
     try:
         db.insert_image(conn, url)
+        if arg['download']:
+            download(url, ssl=not arg['unsafe'])
     except IntegrityError:
         return
 

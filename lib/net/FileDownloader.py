@@ -6,12 +6,12 @@ header_filename = re.compile(r'filename="?([^ ";]+?)"?')
 header_ext_name = re.compile(r'/?[^/]+$')
 
 
-def download(url, path='./download/', filename=None, header=None, cookie=None):
+def download(url, path='./download/', filename=None, header=None, cookie=None, ssl=True):
     header = header if header is not None else {}
     cookie = cookie if cookie is not None else {}
     path = path if path[-1] == '/' or path[-1] == '\\' else path + '/'
     try:
-        r = requests.get(url, headers=header, cookies=cookie, stream=True)
+        r = requests.get(url, headers=header, cookies=cookie, stream=True, verify=ssl)
         if filename is None:
             if 'Content-Disposition' in r.headers:
                 _filename = header_filename.search(r.headers['Content-Disposition'])
@@ -22,6 +22,9 @@ def download(url, path='./download/', filename=None, header=None, cookie=None):
                 filename = util.url_filename(url)
                 if filename is None:
                     filename = 'unnamed_file'
+                else:
+                    path += filename['path']
+                    filename = filename['filename']
         ext_index = filename.rfind('.')
         file_name = filename
         ext_name = ''
@@ -38,6 +41,8 @@ def download(url, path='./download/', filename=None, header=None, cookie=None):
             while os.path.exists('%s%s (%d)%s' % (path, file_name, i, ext_name)):
                 i += 1
             filename = '%s (%d)%s' % (file_name, i, ext_name)
+        if not os.path.exists(path):
+            os.makedirs(path)
         with open(path + filename, 'wb') as file:
             for chunk in r.iter_content(10):
                 file.write(chunk)
