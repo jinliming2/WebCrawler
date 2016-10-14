@@ -31,6 +31,19 @@ def parse_args(args, constant, default_key=''):
     return arg
 
 
+def args_constant(args, constant):
+    """
+    :param args: {Dictionary}
+    :param constant: {Dictionary}
+    """
+    for key in args:
+        if isinstance(args[key], str):
+            rep = str_constant.findall(args[key])
+            for r in rep:
+                if r in constant:
+                    args[key] = args[key].replace('{$' + r + '}', str(constant[r]))
+
+
 def format_width(string, width, character='0'):
     """
     :param string: {String|Number}
