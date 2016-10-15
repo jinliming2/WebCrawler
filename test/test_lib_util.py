@@ -50,6 +50,34 @@ class TestLibUtil(unittest.TestCase):
             'database': './crawler_20161007144900.db'
         })
 
+    def test_args_constant(self):
+        arg = {
+            'url': '1',
+            'a': '2',
+            'b': '3',
+            'c': '4',
+            'download': True,
+            'e': True,
+            'database': './crawler_{$Y}{$M}{$D}{$H}{$m}{$s}.db'
+        }
+        util.args_constant(arg, {
+            'Y': 2016,
+            'M': 10,
+            'D': '07',
+            'H': 14,
+            'm': 49,
+            's': '00'
+        })
+        assert self.dictCompare(arg, {
+            'url': '1',
+            'a': '2',
+            'b': '3',
+            'c': '4',
+            'download': True,
+            'e': True,
+            'database': './crawler_20161007144900.db'
+        })
+
     def test_format_width(self):
         assert util.format_width(1, 2) == "01"
         assert util.format_width(12, 2) == "12"
@@ -92,6 +120,10 @@ class TestLibUtil(unittest.TestCase):
             'deep': 1,
             'origin': True
         })
+        assert self.dictCompare(util.url_get_deep('/test/test#test', 'https://www.example.com'), {
+            'deep': 2,
+            'origin': True
+        })
         assert self.dictCompare(util.url_get_deep('test2/test3', 'https://www.example.com/test1'), {
             'deep': 2,
             'origin': True
@@ -116,11 +148,41 @@ class TestLibUtil(unittest.TestCase):
             'deep': 2,
             'origin': False
         })
+        assert self.dictCompare(util.url_get_deep('https://www.example2.com/test/test2/', 'https://www.example.com'), {
+            'deep': 2,
+            'origin': False
+        })
         assert self.dictCompare(util.url_get_deep('https://www.example2.com/', 'https://www.example.com'), {
             'deep': 1,
             'origin': False
         })
         assert self.dictCompare(util.url_get_deep('https://www.example2.com', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': False
+        })
+        assert self.dictCompare(util.url_get_deep('?a=1&b=2#3', 'https://www.example.com'))
+        assert self.dictCompare(util.url_get_deep('#3', 'https://www.example.com'))
+        assert self.dictCompare(util.url_get_deep('//www.example.com/test/test2', 'https://www.example.com'), {
+            'deep': 2,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('//www.example.com/', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('//www.example.com', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': True
+        })
+        assert self.dictCompare(util.url_get_deep('//www.example2.com/test/test2', 'https://www.example.com'), {
+            'deep': 2,
+            'origin': False
+        })
+        assert self.dictCompare(util.url_get_deep('//www.example2.com/', 'https://www.example.com'), {
+            'deep': 1,
+            'origin': False
+        })
+        assert self.dictCompare(util.url_get_deep('//www.example2.com', 'https://www.example.com'), {
             'deep': 1,
             'origin': False
         })
@@ -140,6 +202,22 @@ class TestLibUtil(unittest.TestCase):
                              'https://www.example.com') == 'https://www.example2.com/test/test2'
         assert util.make_url('https://www.example2.com/', 'https://www.example.com') == 'https://www.example2.com/'
         assert util.make_url('https://www.example2.com', 'https://www.example.com') == 'https://www.example2.com'
+        assert util.make_url('//www.example.com/test/test2',
+                             'https://www.example.com') == 'https://www.example.com/test/test2'
+        assert util.make_url('//www.example.com/', 'https://www.example.com') == 'https://www.example.com/'
+        assert util.make_url('//www.example.com', 'https://www.example.com') == 'https://www.example.com'
+        assert util.make_url('//www.example2.com/test/test2',
+                             'https://www.example.com') == 'https://www.example2.com/test/test2'
+        assert util.make_url('//www.example2.com/', 'https://www.example.com') == 'https://www.example2.com/'
+        assert util.make_url('//www.example2.com', 'https://www.example.com') == 'https://www.example2.com'
+        assert util.make_url('//www.example.com/test/test2',
+                             'http://www.example.com') == 'http://www.example.com/test/test2'
+        assert util.make_url('//www.example.com/', 'http://www.example.com') == 'http://www.example.com/'
+        assert util.make_url('//www.example.com', 'http://www.example.com') == 'http://www.example.com'
+        assert util.make_url('//www.example2.com/test/test2',
+                             'http://www.example.com') == 'http://www.example2.com/test/test2'
+        assert util.make_url('//www.example2.com/', 'http://www.example.com') == 'http://www.example2.com/'
+        assert util.make_url('//www.example2.com', 'http://www.example.com') == 'http://www.example2.com'
 
 
 if __name__ == '__main__':

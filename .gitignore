@@ -1,6 +1,6 @@
 __pycache__/
 .idea/
-coverage/
+htmlcov/
 .coverage
 *.db
 download/
